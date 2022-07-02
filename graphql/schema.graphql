@@ -19,7 +19,17 @@ type Query {
     users(
         "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
         name: String @where(operator: "like")
-    ): [User!]! @all
+    ): [User!]! @paginate(defaultCount: 10)
+
+    post(id: ID @eq, title: String @where(operator: "like")): Post @find
+
+    posts: [Post!]! @paginate(defaultCount: 10)
+}
+
+type Mutation {
+    createUser(name: String!, email: String!, password: String!): User @create
+
+    createPostMutation(title: String!, content: String!, user_id: ID!): Post
 }
 
 "Account of a person who utilizes this application."
@@ -41,4 +51,13 @@ type User {
 
     "When the account was last updated."
     updated_at: DateTime!
+
+    posts: [Post] @hasMany
+}
+
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    user: User! @belongsTo
 }
