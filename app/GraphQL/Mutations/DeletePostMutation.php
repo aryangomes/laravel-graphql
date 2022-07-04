@@ -5,7 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\Models\Post;
 use Illuminate\Support\Facades\Log;
 
-final class CreatePostMutation
+final class DeletePostMutation
 {
     /**
      * @param  null  $_
@@ -14,9 +14,12 @@ final class CreatePostMutation
     public function __invoke($_, array $args)
     {
 
-
         try {
-            return Post::create($args);
+            $post = Post::findOrFail($args['id']);
+
+            $post->delete();
+
+            return $post;
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
         }
