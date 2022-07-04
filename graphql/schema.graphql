@@ -19,17 +19,25 @@ type Query {
     users(
         "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
         name: String @where(operator: "like")
-    ): [User!]! @paginate(defaultCount: 10)
+    ): [User!]!
+        @paginate(defaultCount: 10)
+        @orderBy(column: "created_at", direction: DESC)
 
     post(id: ID @eq, title: String @where(operator: "like")): Post @find
 
-    posts: [Post!]! @paginate(defaultCount: 10)
+    posts: [Post!]!
+        @paginate(defaultCount: 10)
+        @orderBy(column: "created_at", direction: DESC)
 }
 
 type Mutation {
     createUser(name: String!, email: String!, password: String!): User @create
 
     createPostMutation(title: String!, content: String!, user_id: ID!): Post
+
+    updatePostMutation(id: ID!, title: String, content: String): Post
+
+    deletePostMutation(id: ID!): Post
 }
 
 "Account of a person who utilizes this application."
@@ -59,5 +67,7 @@ type Post {
     id: ID!
     title: String!
     content: String!
+    created_at: DateTime!
+    updated_at: DateTime!
     user: User! @belongsTo
 }
